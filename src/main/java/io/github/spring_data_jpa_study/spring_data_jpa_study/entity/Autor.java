@@ -35,4 +35,7 @@ public class Autor implements Serializable {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    public Autor() {
+    }
 }
