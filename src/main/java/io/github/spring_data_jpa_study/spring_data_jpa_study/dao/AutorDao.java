@@ -1,6 +1,7 @@
 package io.github.spring_data_jpa_study.spring_data_jpa_study.dao;
 
 import io.github.spring_data_jpa_study.spring_data_jpa_study.entity.Autor;
+import io.github.spring_data_jpa_study.spring_data_jpa_study.entity.InfoAutor;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -47,4 +48,19 @@ public class AutorDao {
         final String parametro = "%".concat(termo).concat("%");
         return this.manager.createQuery(sqlQuery, Autor.class).setParameter("termo", parametro).getResultList();
     }
+
+    @Transactional(readOnly = true)
+    public Long getTotalElements() {
+        final String sqlQuery = "select count(1) from Autor a";
+        return this.manager.createQuery(sqlQuery, Long.class).getSingleResult();
+    }
+
+    @Transactional
+    public Autor saveInfoAutor(InfoAutor infoAutor, Long autorId) {
+        var autor = findById(autorId);
+        autor.setInfoAutor(infoAutor);
+        return autor;
+    }
+
+
 }
