@@ -2,6 +2,7 @@ package io.github.spring_data_jpa_study.spring_data_jpa_study.dao;
 
 import io.github.spring_data_jpa_study.spring_data_jpa_study.entity.Autor;
 import io.github.spring_data_jpa_study.spring_data_jpa_study.entity.InfoAutor;
+import io.github.spring_data_jpa_study.spring_data_jpa_study.projection.AutorInfoProjection;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -45,7 +46,7 @@ public class AutorDao {
     @Transactional(readOnly = true)
     public List<Autor> findAllByNomeOrSobrenome(String termo) {
         final String sqlQuery = "select a from Autor a where a.nome like :termo OR a.sobrenome like :termo";
-        final String parametro = "%".concat(termo).concat("%");
+        final String parametro = criaParametroParaComandoLike(termo);
         return this.manager.createQuery(sqlQuery, Autor.class).setParameter("termo", parametro).getResultList();
     }
 
@@ -60,6 +61,24 @@ public class AutorDao {
         var autor = findById(autorId);
         autor.setInfoAutor(infoAutor);
         return autor;
+    }
+
+    @Transactional
+    public List<Autor> findByCargo(String cargo) {
+        String sqlQuery = "select a from Autor a where a.infoAutor.cargo like :cargo order by a.nome asc";
+        final String parametro = criaParametroParaComandoLike(cargo);
+        return this.manager.createQuery(sqlQuery, Autor.class).setParameter("cargo", parametro).getResultList();
+    }
+
+    @Transactional(readOnly = true)
+    public AutorInfoProjection findAutorInfoById(Long id) {
+        final String sqlQuery = "select new AutorInfoProjection(a.nome, a.sobrenome, a.infoAutor.cargo, a.infoAutor.bio) " +
+                "from Autor a where a.id = :id";
+        return this.manager.createQuery(sqlQuery, AutorInfoProjection.class).setParameter("id", id).getSingleResult();
+    }
+
+    private String criaParametroParaComandoLike(String termo) {
+        return "%".concat(termo).concat("%");
     }
 
 

@@ -3,6 +3,7 @@ package io.github.spring_data_jpa_study.spring_data_jpa_study.controller;
 import io.github.spring_data_jpa_study.spring_data_jpa_study.dao.AutorDao;
 import io.github.spring_data_jpa_study.spring_data_jpa_study.entity.Autor;
 import io.github.spring_data_jpa_study.spring_data_jpa_study.entity.InfoAutor;
+import io.github.spring_data_jpa_study.spring_data_jpa_study.projection.AutorInfoProjection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,6 +59,16 @@ public class AutorController {
     @PutMapping("{id}/info")
     public Autor salvarInfoAUtor(@PathVariable Long id, @RequestBody InfoAutor infoAutor) {
         return autorDao.saveInfoAutor(infoAutor, id);
+    }
+
+    @GetMapping("info")
+    public List<Autor> salvarInfoAUtor(@RequestParam String cargo) {
+        return autorDao.findByCargo(cargo);
+    }
+
+    @GetMapping("autor-info")
+    public AutorInfoProjection salvarInfoAutor(@RequestParam Long id) {
+        return autorDao.findAutorInfoById(id);
     }
 
 }
